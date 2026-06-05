@@ -140,7 +140,7 @@ export function UploadZone({ onJobsLoaded }: UploadZoneProps) {
         onChange={handleFileChange}
       />
 
-      <div className="flex flex-col items-center justify-center px-6 py-14 sm:py-16 text-center">
+      <div className="flex flex-col items-center justify-center px-6 py-10 sm:py-16 text-center">
         {/* Icon */}
         <div
           className={cn(
@@ -168,7 +168,7 @@ export function UploadZone({ onJobsLoaded }: UploadZoneProps) {
         {/* Text */}
         {status === "idle" && (
           <>
-            <p className="font-display text-lg font-semibold text-ink">
+            <p className="font-display text-base sm:text-lg font-semibold text-ink">
               Déposez votre fichier JSON ici
             </p>
             <p className="mt-1.5 text-sm text-stone-500 font-body">
@@ -184,20 +184,20 @@ export function UploadZone({ onJobsLoaded }: UploadZoneProps) {
         )}
 
         {status === "dragging" && (
-          <p className="font-display text-lg font-semibold text-accent">
+          <p className="font-display text-base sm:text-lg font-semibold text-accent">
             Relâchez pour importer
           </p>
         )}
 
         {status === "loading" && (
-          <p className="font-display text-lg font-semibold text-ink">
+          <p className="font-display text-base sm:text-lg font-semibold text-ink">
             Lecture en cours…
           </p>
         )}
 
         {status === "success" && (
           <>
-            <p className="font-display text-lg font-semibold text-emerald-700">
+            <p className="font-display text-base sm:text-lg font-semibold text-emerald-700">
               {jobCount} offre{jobCount > 1 ? "s" : ""} importée{jobCount > 1 ? "s" : ""}
             </p>
             <p className="mt-1 text-sm text-stone-500 font-mono truncate max-w-xs">
@@ -219,7 +219,7 @@ export function UploadZone({ onJobsLoaded }: UploadZoneProps) {
 
         {status === "error" && (
           <>
-            <p className="font-display text-lg font-semibold text-red-600">
+            <p className="font-display text-base sm:text-lg font-semibold text-red-600">
               Erreur de chargement
             </p>
             <p className="mt-1 text-sm text-red-500 font-body max-w-xs">{errorMsg}</p>

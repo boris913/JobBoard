@@ -20,7 +20,6 @@ interface HeroProps {
 }
 
 export function HeroSection({ offers }: HeroProps) {
-  // Prend les 3 premières offres pour le mockup, ou des placeholders si vide
   const displayOffers = offers.slice(0, 3);
   const hasOffers = displayOffers.length > 0;
 
@@ -68,12 +67,14 @@ export function HeroSection({ offers }: HeroProps) {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative rounded-2xl border border-stone-200 bg-white/80 p-6 shadow-2xl shadow-stone-200/50 backdrop-blur-sm">
+            <div className="relative rounded-2xl border border-stone-200 bg-white/80 p-4 sm:p-6 shadow-2xl shadow-stone-200/50 backdrop-blur-sm">
               <div className="flex items-center gap-2 mb-4">
                 <div className="h-3 w-3 rounded-full bg-red-400" />
                 <div className="h-3 w-3 rounded-full bg-amber-400" />
                 <div className="h-3 w-3 rounded-full bg-emerald-400" />
-                <div className="ml-auto text-xs text-stone-400 font-mono">job-board.app/offres</div>
+                <div className="ml-auto text-[10px] sm:text-xs text-stone-400 font-mono truncate max-w-[100px] sm:max-w-none">
+                  job-board.app/offres
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -81,7 +82,7 @@ export function HeroSection({ offers }: HeroProps) {
                   displayOffers.map((offer) => (
                     <div
                       key={offer.id}
-                      className="rounded-xl border border-stone-100 bg-paper/60 p-4 flex items-center gap-4 hover:border-accent/20 transition-colors cursor-pointer group"
+                      className="rounded-xl border border-stone-100 bg-paper/60 p-4 flex items-center gap-4 min-w-0 hover:border-accent/20 transition-colors cursor-pointer group"
                     >
                       <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
                         <Building2 className="h-5 w-5 text-accent" />
@@ -90,37 +91,36 @@ export function HeroSection({ offers }: HeroProps) {
                         <div className="font-display text-sm font-semibold text-ink truncate group-hover:text-accent transition-colors">
                           {offer.title}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-stone-500 font-body">{offer.company}</span>
+                        <div className="flex items-center gap-2 mt-1 min-w-0">
+                          <span className="text-xs text-stone-500 font-body truncate">{offer.company}</span>
                           {offer.location && (
-                            <span className="flex items-center gap-1 text-xs text-stone-400">
-                              <MapPin className="h-3 w-3" />
-                              {offer.location}
+                            <span className="flex items-center gap-1 text-xs text-stone-400 truncate">
+                              <MapPin className="h-3 w-3 shrink-0" />
+                              <span className="truncate">{offer.location}</span>
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="shrink-0">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/20 px-3 py-1 text-xs font-medium text-accent">
-                          <Clock className="h-3 w-3" />
-                          {offer.source || "Voir"}
+                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/20 px-3 py-1 text-xs font-medium text-accent truncate max-w-[100px] sm:max-w-[140px]">
+                          <Clock className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{offer.source || "Voir"}</span>
                         </span>
                       </div>
                     </div>
                   ))
                 ) : (
-                  // Fallback skeleton si aucune donnée
                   <>
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="rounded-xl border border-stone-100 bg-paper/60 p-4 flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-lg bg-stone-200/70 flex items-center justify-center">
+                      <div key={i} className="rounded-xl border border-stone-100 bg-paper/60 p-4 flex items-center gap-4 min-w-0">
+                        <div className="h-10 w-10 rounded-lg bg-stone-200/70 flex items-center justify-center shrink-0">
                           <Building2 className="h-5 w-5 text-stone-400" />
                         </div>
-                        <div className="flex-1 space-y-2">
+                        <div className="flex-1 space-y-2 min-w-0">
                           <div className="h-4 w-3/4 rounded bg-stone-200/70" />
                           <div className="h-3 w-1/2 rounded bg-stone-200/50" />
                         </div>
-                        <div className="h-6 w-20 rounded-full bg-accent/10 border border-accent/20" />
+                        <div className="h-6 w-20 rounded-full bg-accent/10 border border-accent/20 shrink-0" />
                       </div>
                     ))}
                     <div className="text-center text-xs text-stone-400 py-2">
@@ -130,11 +130,11 @@ export function HeroSection({ offers }: HeroProps) {
                 )}
               </div>
 
-              <div className="mt-4 flex gap-2">
-                <div className="h-8 flex-1 rounded-lg bg-stone-100 flex items-center px-3 text-xs text-stone-400">
+              <div className="mt-4 flex flex-wrap gap-2">
+                <div className="h-8 flex-1 rounded-lg bg-stone-100 flex items-center px-3 text-xs text-stone-400 min-w-0 truncate">
                   {hasOffers ? `${offers.length} offres chargées...` : "Recherche..."}
                 </div>
-                <div className="h-8 w-24 rounded-lg bg-stone-100 flex items-center justify-center text-xs text-stone-500 font-medium">
+                <div className="h-8 w-24 rounded-lg bg-stone-100 flex items-center justify-center text-xs text-stone-500 font-medium shrink-0">
                   Filtrer
                 </div>
               </div>

@@ -42,7 +42,7 @@ export function TrustLogos() {
         <p className="text-center text-xs font-medium text-stone-400 uppercase tracking-wider font-body mb-8">
           Sources déjà compatibles
         </p>
-        <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-6">
+        <div className="flex flex-wrap justify-center items-center gap-x-6 sm:gap-x-10 gap-y-6">
           {sources.map((s) => (
             <motion.div
               key={s.name}
