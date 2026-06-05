@@ -2,13 +2,21 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Job } from "@/types/job";
 import { JobDetailClient } from "./JobDetailClient";
+import { loadOffers } from "@/lib/offers";
+import { extractCity } from "@/lib/utils";
 
-async function getAllJobs(): Promise<Job[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/jobs`, {
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  return res.json();
+// Fonction d'aide pour charger et adapter les données localement
+function getAdaptedJobs(): Job[] {
+  const rawOffers = loadOffers();
+  return rawOffers.map((offer) => ({
+    title: offer.title,
+    company: offer.company,
+    location: offer.location || "Non précisée",
+    date_posted: offer.date || "",
+    url: offer.url || "",
+    source: offer.source || "Inconnue",
+    description_snippet: offer.description || "",
+  }));
 }
 
 function findJobById(jobs: Job[], id: string): Job | null {
@@ -17,7 +25,8 @@ function findJobById(jobs: Job[], id: string): Job | null {
 }
 
 export async function generateStaticParams() {
-  const jobs = await getAllJobs();
+  // Extraction locale et synchrone pendant le build
+  const jobs = getAdaptedJobs();
   return jobs.map((job) => ({
     id: encodeURIComponent(`${job.title}-${job.company}-${job.location}`),
   }));
@@ -25,7 +34,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const jobs = await getAllJobs();
+  const jobs = getAdaptedJobs();
   const job = findJobById(jobs, id);
 
   if (!job) {
@@ -45,14 +54,23 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const jobs = await getAllJobs();
+  const jobs = getAdaptedJobs();
   const job = findJobById(jobs, id);
 
   if (!job) notFound();
 
-  // Offres similaires : même source ou même ville, exclure l'offre actuelle
+  // On extrait la ville proprement grâce à ta fonction utilitaire
+  const targetCity = extractCity(job.location);
+
+  // Offres similaires : même source OU même ville (basé sur le nom nettoyé), exclure l'offre actuelle
   const similarJobs = jobs
-    .filter((j) => j.url !== job.url && (j.source === job.source || j.location.includes(job.location.split(" ")[0])))
+    .filter((j) => {
+      const isSameUrl = j.url === job.url;
+      const isSameSource = j.source === job.source;
+      const isSameCity = targetCity !== "Non précisé" && extractCity(j.location) === targetCity;
+      
+      return !isSameUrl && (isSameSource || isSameCity);
+    })
     .slice(0, 4);
 
   return <JobDetailClient job={job} similarJobs={similarJobs} allJobsCount={jobs.length} />;
