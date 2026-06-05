@@ -24,68 +24,101 @@ export function HeroSection({ offers }: HeroProps) {
   const hasOffers = displayOffers.length > 0;
 
   return (
-    <section className="relative overflow-hidden pt-16 pb-24 sm:pt-24 sm:pb-32">
+    <section className="relative overflow-hidden pt-12 pb-16 sm:pt-24 sm:pb-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent border border-accent/20 mb-6">
-              <Sparkles className="h-3.5 w-3.5" />
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+          {/* Colonne texte */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="min-w-0 max-w-full"
+          >
+            <motion.div
+              variants={fadeUp}
+              custom={0}
+              className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent border border-accent/20 mb-5 sm:mb-6"
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
               {hasOffers ? `${offers.length} offres disponibles` : "Nouveau : importez vos fichiers JSON"}
             </motion.div>
-            <motion.h1 variants={fadeUp} custom={1} className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-ink tracking-tight leading-[1.1]">
+
+            <motion.h1
+              variants={fadeUp}
+              custom={1}
+              className="font-display text-[26px] sm:text-4xl md:text-5xl lg:text-6xl font-bold text-ink tracking-tight leading-[1.15] sm:leading-[1.1] break-words"
+            >
               Toutes vos offres d&apos;emploi,{" "}
               <span className="text-accent">centralisées</span>
             </motion.h1>
-            <motion.p variants={fadeUp} custom={2} className="mt-6 text-lg text-stone-600 font-body leading-relaxed max-w-lg">
+
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="mt-4 sm:mt-6 text-base sm:text-lg text-stone-600 font-body leading-relaxed max-w-lg break-words"
+            >
               Finissez de jongler entre Indeed, LinkedIn, Welcome to the Jungle et les autres.
               JobBoard agrège automatiquement les offres qui vous correspondent en un seul tableau de bord clair.
             </motion.p>
-            <motion.div variants={fadeUp} custom={3} className="mt-8 flex flex-wrap gap-4">
+
+            <motion.div
+              variants={fadeUp}
+              custom={3}
+              className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4"
+            >
               <Link
                 href="/offres"
-                className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-3.5 text-sm font-semibold text-paper transition-all hover:bg-ink-soft active:scale-[0.98] font-body shadow-lg shadow-ink/10"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-6 py-3.5 text-sm font-semibold text-paper transition-all hover:bg-ink-soft active:scale-[0.98] font-body shadow-lg shadow-ink/10 w-full sm:w-auto"
               >
                 Explorer les offres
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
               <Link
                 href="#comment-ca-marche"
-                className="inline-flex items-center gap-2 rounded-xl border border-stone-300 bg-white/60 px-6 py-3.5 text-sm font-semibold text-ink transition-all hover:bg-stone-50 active:scale-[0.98] font-body"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white/60 px-6 py-3.5 text-sm font-semibold text-ink transition-all hover:bg-stone-50 active:scale-[0.98] font-body w-full sm:w-auto"
               >
                 Comment ça marche ?
               </Link>
             </motion.div>
-            <motion.p variants={fadeUp} custom={4} className="mt-6 text-xs text-stone-400 font-body flex items-center gap-2">
-              <Shield className="h-3.5 w-3.5" />
+
+            <motion.p
+              variants={fadeUp}
+              custom={4}
+              className="mt-5 sm:mt-6 text-xs text-stone-400 font-body flex items-center gap-2"
+            >
+              <Shield className="h-3.5 w-3.5 shrink-0" />
               100 % gratuit · Aucune donnée personnelle stockée
             </motion.p>
           </motion.div>
 
+          {/* Mockup */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, rotate: 1 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
+            className="relative min-w-0 max-w-full"
           >
-            <div className="relative rounded-2xl border border-stone-200 bg-white/80 p-4 sm:p-6 shadow-2xl shadow-stone-200/50 backdrop-blur-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-3 w-3 rounded-full bg-red-400" />
-                <div className="h-3 w-3 rounded-full bg-amber-400" />
-                <div className="h-3 w-3 rounded-full bg-emerald-400" />
-                <div className="ml-auto text-[10px] sm:text-xs text-stone-400 font-mono truncate max-w-[100px] sm:max-w-none">
+            <div className="relative rounded-2xl border border-stone-200 bg-white/80 p-3 sm:p-6 shadow-2xl shadow-stone-200/50 backdrop-blur-sm max-w-full overflow-hidden">
+              {/* Header du mockup */}
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-red-400" />
+                <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-amber-400" />
+                <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-400" />
+                <div className="ml-auto text-[10px] sm:text-xs text-stone-400 font-mono truncate max-w-[80px] sm:max-w-none">
                   job-board.app/offres
                 </div>
               </div>
 
-              <div className="space-y-3">
+              {/* Liste d'offres */}
+              <div className="space-y-2 sm:space-y-3">
                 {hasOffers ? (
                   displayOffers.map((offer) => (
                     <div
                       key={offer.id}
-                      className="rounded-xl border border-stone-100 bg-paper/60 p-4 flex items-center gap-4 min-w-0 hover:border-accent/20 transition-colors cursor-pointer group"
+                      className="rounded-xl border border-stone-100 bg-paper/60 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 min-w-0 hover:border-accent/20 transition-colors cursor-pointer group"
                     >
-                      <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                        <Building2 className="h-5 w-5 text-accent" />
+                      <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                        <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-display text-sm font-semibold text-ink truncate group-hover:text-accent transition-colors">
@@ -94,7 +127,7 @@ export function HeroSection({ offers }: HeroProps) {
                         <div className="flex items-center gap-2 mt-1 min-w-0">
                           <span className="text-xs text-stone-500 font-body truncate">{offer.company}</span>
                           {offer.location && (
-                            <span className="flex items-center gap-1 text-xs text-stone-400 truncate">
+                            <span className="hidden sm:flex items-center gap-1 text-xs text-stone-400 truncate">
                               <MapPin className="h-3 w-3 shrink-0" />
                               <span className="truncate">{offer.location}</span>
                             </span>
@@ -102,8 +135,8 @@ export function HeroSection({ offers }: HeroProps) {
                         </div>
                       </div>
                       <div className="shrink-0">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/20 px-3 py-1 text-xs font-medium text-accent truncate max-w-[100px] sm:max-w-[140px]">
-                          <Clock className="h-3 w-3 shrink-0" />
+                        <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/20 px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-medium text-accent truncate max-w-[80px] sm:max-w-[140px]">
+                          <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" />
                           <span className="truncate">{offer.source || "Voir"}</span>
                         </span>
                       </div>
@@ -112,15 +145,18 @@ export function HeroSection({ offers }: HeroProps) {
                 ) : (
                   <>
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="rounded-xl border border-stone-100 bg-paper/60 p-4 flex items-center gap-4 min-w-0">
-                        <div className="h-10 w-10 rounded-lg bg-stone-200/70 flex items-center justify-center shrink-0">
-                          <Building2 className="h-5 w-5 text-stone-400" />
+                      <div
+                        key={i}
+                        className="rounded-xl border border-stone-100 bg-paper/60 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 min-w-0"
+                      >
+                        <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-stone-200/70 flex items-center justify-center shrink-0">
+                          <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-stone-400" />
                         </div>
                         <div className="flex-1 space-y-2 min-w-0">
                           <div className="h-4 w-3/4 rounded bg-stone-200/70" />
                           <div className="h-3 w-1/2 rounded bg-stone-200/50" />
                         </div>
-                        <div className="h-6 w-20 rounded-full bg-accent/10 border border-accent/20 shrink-0" />
+                        <div className="h-6 w-16 sm:w-20 rounded-full bg-accent/10 border border-accent/20 shrink-0" />
                       </div>
                     ))}
                     <div className="text-center text-xs text-stone-400 py-2">
@@ -130,19 +166,20 @@ export function HeroSection({ offers }: HeroProps) {
                 )}
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              {/* Barre recherche/filtre mockup */}
+              <div className="mt-3 sm:mt-4 flex flex-wrap gap-2">
                 <div className="h-8 flex-1 rounded-lg bg-stone-100 flex items-center px-3 text-xs text-stone-400 min-w-0 truncate">
                   {hasOffers ? `${offers.length} offres chargées...` : "Recherche..."}
                 </div>
-                <div className="h-8 w-24 rounded-lg bg-stone-100 flex items-center justify-center text-xs text-stone-500 font-medium shrink-0">
+                <div className="h-8 w-20 sm:w-24 rounded-lg bg-stone-100 flex items-center justify-center text-xs text-stone-500 font-medium shrink-0">
                   Filtrer
                 </div>
               </div>
             </div>
 
             {/* Decorative blobs */}
-            <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-accent/10 blur-3xl" />
-            <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-stone-300/20 blur-3xl" />
+            <div className="absolute -top-8 -right-8 h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-accent/10 blur-3xl" />
+            <div className="absolute -bottom-8 -left-8 h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-stone-300/20 blur-3xl" />
           </motion.div>
         </div>
       </div>
