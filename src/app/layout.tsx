@@ -28,6 +28,11 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: "JobBoard — Centralisez vos offres d'emploi",
   description: "Agrégateur intelligent d'offres d'emploi pour les particuliers. Fini les 15 onglets ouverts.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   openGraph: {
     title: "JobBoard — Centralisez vos offres d'emploi",
     description: "Agrégateur intelligent d'offres d'emploi pour les particuliers. Fini les 15 onglets ouverts.",
@@ -42,6 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`}>
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
       <body className="grain-overlay min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">{children}</main>

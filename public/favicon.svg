@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Fond arrondi -->
+  <rect width="32" height="32" rx="8" fill="#1C1917"/>
+
+  <!-- Valise / mallette -->
+  <rect x="6" y="10" width="20" height="14" rx="3" fill="#FAFAF9" stroke="#FAFAF9" stroke-width="1.5"/>
+
+  <!-- Poignée de la valise -->
+  <path d="M12 10V8C12 6.89543 12.8954 6 14 6H18C19.1046 6 20 6.89543 20 8V10" 
+        stroke="#FAFAF9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Accent orange — badge "J" stylisé -->
+  <circle cx="22" cy="12" r="4" fill="#D4521A"/>
+  <text x="22" y="13.5" text-anchor="middle" fill="#FAFAF9" 
+        font-family="Arial, sans-serif" font-weight="800" font-size="5">J</text>
+
+  <!-- Détail fermeture valise -->
+  <rect x="14" y="13" width="4" height="2" rx="1" fill="#1C1917" opacity="0.15"/>
+</svg>
