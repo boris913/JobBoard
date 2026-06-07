@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Job, SortState, FilterState } from "@/types/job";
 import { JobCard } from "@/components/JobCard";
 import { FilterBar } from "@/components/FilterBar";
@@ -9,17 +10,22 @@ import { ViewToggle } from "@/components/ViewToggle";
 import { Pagination } from "@/components/Pagination";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { UploadZone } from "@/components/UploadZone";
-// import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 
-export default function OffresPage() {
+function OffresPageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"grid" | "list">("grid");
-  const [currentPage, setCurrentPage] = useState(1);
   const [dataSource, setDataSource] = useState<"api" | "upload">("api");
   const itemsPerPage = 12;
+
+  // Lire la page depuis l'URL, défaut à 1
+  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
 
   const [filters, setFilters] = useState<FilterState>({
     search: "",
@@ -27,6 +33,14 @@ export default function OffresPage() {
     location: "",
   });
   const [sort, setSort] = useState<SortState>({ field: "date_posted", direction: "desc" });
+
+  // Synchroniser l'état local avec l'URL
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get("page") || "1", 10);
+    if (!isNaN(urlPage) && urlPage >= 1) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (dataSource === "api") {
@@ -75,16 +89,42 @@ export default function OffresPage() {
     });
 
     setFilteredJobs(result);
-    setCurrentPage(1);
+    // Ne pas réinitialiser la page ici, laisser l'URL gérer
   }, [jobs, filters, sort]);
 
   const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
   const paginatedJobs = filteredJobs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const handleJobsLoaded = (uploadedJobs: Job[]) => {
-    setJobs(uploadedJobs);
-    setFilteredJobs(uploadedJobs);
-    setDataSource("upload");
+  // Fonction pour changer de page et mettre à jour l'URL
+  const handlePageChange = (page: number) => {
+    const newPage = Math.max(1, Math.min(page, totalPages || 1));
+    setCurrentPage(newPage);
+    
+    // Mettre à jour l'URL avec le paramètre de page
+    const params = new URLSearchParams(searchParams.toString());
+    if (newPage === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", newPage.toString());
+    }
+    
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.push(newUrl, { scroll: false });
+  };
+
+  // Réinitialiser à la page 1 quand les filtres changent significativement
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    // Réinitialiser la page à 1 quand les filtres changent
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.push(newUrl, { scroll: false });
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (newSort: SortState) => {
+    setSort(newSort);
   };
 
   if (loading && dataSource === "api") {
@@ -121,26 +161,7 @@ export default function OffresPage() {
           >
             Offres agrégées
           </button>
-          {/* <button
-            onClick={() => setDataSource("upload")}
-            className={`text-sm font-medium font-body pb-1 border-b-2 transition-colors ${
-              dataSource === "upload" ? "border-accent text-accent" : "border-transparent text-stone-400 hover:text-stone-600"
-            }`}
-          >
-            Importer un fichier
-          </button> */}
         </div>
-
-        {/* {dataSource === "upload" && (
-          <div className="mb-8">
-            <UploadZone onJobsLoaded={handleJobsLoaded} />
-            {jobs.length === 0 && (
-              <p className="mt-4 text-sm text-stone-500 text-center font-body">
-                Glissez un fichier JSON ou cliquez pour sélectionner
-              </p>
-            )}
-          </div>
-        )} */}
       </div>
 
       {jobs.length > 0 && (
@@ -153,8 +174,8 @@ export default function OffresPage() {
                 jobs={jobs}
                 filters={filters}
                 sort={sort}
-                onFilterChange={setFilters}
-                onSortChange={setSort}
+                onFilterChange={handleFilterChange}
+                onSortChange={handleSortChange}
               />
             </div>
             <ViewToggle view={view} onViewChange={setView} />
@@ -162,12 +183,21 @@ export default function OffresPage() {
 
           <div className={`mt-8 ${view === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}`}>
             {paginatedJobs.map((job, idx) => (
-              <JobCard key={job.url || idx} job={job} view={view} />
+              <JobCard 
+                key={job.url || idx} 
+                job={job} 
+                view={view} 
+                currentPage={currentPage}
+              />
             ))}
           </div>
 
           {totalPages > 1 && (
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            <Pagination 
+              currentPage={currentPage} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
           )}
         </>
       )}
@@ -176,5 +206,21 @@ export default function OffresPage() {
         <EmptyState message="Aucune offre trouvée. Placez vos fichiers JSON dans le dossier 'data' ou importez-en un." />
       )}
     </div>
+  );
+}
+
+export default function OffresPage() {
+  return (
+    <Suspense fallback={
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-64 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    }>
+      <OffresPageContent />
+    </Suspense>
   );
 }

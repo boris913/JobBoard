@@ -18,13 +18,18 @@ interface JobDetailClientProps {
   job: Job;
   similarJobs: Job[];
   allJobsCount: number;
+  returnPage?: string;
 }
 
 /* ─── Breadcrumb ─── */
-function Breadcrumb({ job }: { job: Job }) {
+function Breadcrumb({ job, returnPage }: { job: Job; returnPage?: string }) {
+  const backUrl = returnPage && parseInt(returnPage, 10) > 1 
+    ? `/offres?page=${returnPage}` 
+    : "/offres";
+
   return (
     <nav className="flex items-center gap-2 text-sm text-stone-400 font-body mb-6">
-      <Link href="/offres" className="hover:text-accent transition-colors">Offres</Link>
+      <Link href={backUrl} className="hover:text-accent transition-colors">Offres</Link>
       <ChevronRight className="h-3.5 w-3.5" />
       <span className="text-stone-500 truncate max-w-[200px] sm:max-w-xs">{job.title}</span>
     </nav>
@@ -41,7 +46,6 @@ function ShareModal({ url, title, onClose }: { url: string; title: string; onClo
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // fallback
       const ta = document.createElement("textarea");
       ta.value = url;
       document.body.appendChild(ta);
@@ -101,13 +105,16 @@ function ShareModal({ url, title, onClose }: { url: string; title: string; onClo
 }
 
 /* ─── Similar Job Card ─── */
-function SimilarJobCard({ job }: { job: Job }) {
+function SimilarJobCard({ job, returnPage }: { job: Job; returnPage?: string }) {
   const sourceColor = getSourceColor(job.source);
   const remote = isRemote(job.location);
   const jobId = encodeURIComponent(`${job.title}-${job.company}-${job.location}`);
+  const detailUrl = returnPage && parseInt(returnPage, 10) > 1 
+    ? `/job/${jobId}?returnPage=${returnPage}` 
+    : `/job/${jobId}`;
 
   return (
-    <Link href={`/job/${jobId}`} className="group block">
+    <Link href={detailUrl} className="group block">
       <div className="rounded-xl border border-stone-200 bg-white/60 p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:border-stone-300">
         <h4 className="font-display text-sm font-semibold text-ink line-clamp-2 group-hover:text-accent transition-colors">
           {job.title}
@@ -136,16 +143,20 @@ function SimilarJobCard({ job }: { job: Job }) {
 }
 
 /* ─── Main Component ─── */
-export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailClientProps) {
+export function JobDetailClient({ job, similarJobs, allJobsCount, returnPage }: JobDetailClientProps) {
   const [saved, setSaved] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const sourceColor = getSourceColor(job.source);
   const remote = isRemote(job.location);
   const hasDate = job.date_posted && job.date_posted.trim() !== "";
 
+  // URL de retour vers la liste
+  const backUrl = returnPage && parseInt(returnPage, 10) > 1 
+    ? `/offres?page=${returnPage}` 
+    : "/offres";
+
   const toggleSave = () => {
     setSaved(!saved);
-    // Ici on pourrait persister dans localStorage
     const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
     const jobKey = `${job.title}-${job.company}-${job.location}`;
     if (!saved) {
@@ -157,7 +168,7 @@ export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailCli
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <Breadcrumb job={job} />
+      <Breadcrumb job={job} returnPage={returnPage} />
 
       {/* ─── Header Card ─── */}
       <motion.div
@@ -260,49 +271,13 @@ export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailCli
           transition={{ duration: 0.4, delay: 0.1 }}
           className="lg:col-span-2 space-y-6"
         >
-          {/* Description */}
-          {/* <div className="rounded-2xl border border-stone-200 bg-white/80 p-6 sm:p-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                <Briefcase className="h-5 w-5" />
-              </div>
-              <h2 className="font-display text-xl font-semibold text-ink">Description du poste</h2>
-            </div>
-            {job.description_snippet ? (
-              <div className="prose prose-stone max-w-none">
-                <p className="text-stone-600 font-body leading-relaxed whitespace-pre-line">
-                  {job.description_snippet}
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-xl bg-stone-50 border border-stone-100 p-6 text-center">
-                <AlertTriangle className="h-8 w-8 text-stone-300 mx-auto mb-3" />
-                <p className="text-sm text-stone-500 font-body">
-                  La description complète n&apos;est pas disponible dans nos données.
-                </p>
-                <p className="text-xs text-stone-400 font-body mt-1">
-                  Consultez l&apos;offre originale sur {job.source} pour plus de détails.
-                </p>
-                <a
-                  href={job.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-accent hover:text-accent-dark transition-colors font-body"
-                >
-                  Voir l&apos;offre complète
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            )}
-          </div> */}
-
           {/* Similar Jobs */}
           {similarJobs.length > 0 && (
             <div className="rounded-2xl border border-stone-200 bg-white/80 p-6 sm:p-8">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="font-display text-lg font-semibold text-ink">Offres similaires</h2>
                 <Link
-                  href="/offres"
+                  href={backUrl}
                   className="text-sm font-medium text-accent hover:text-accent-dark transition-colors font-body"
                 >
                   Voir tout
@@ -316,7 +291,7 @@ export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailCli
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 + i * 0.05 }}
                   >
-                    <SimilarJobCard job={sj} />
+                    <SimilarJobCard job={sj} returnPage={returnPage} />
                   </motion.div>
                 ))}
               </div>
@@ -331,23 +306,6 @@ export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailCli
           transition={{ duration: 0.4, delay: 0.2 }}
           className="space-y-6"
         >
-          {/* Quick Apply Card */}
-          {/* <div className="rounded-2xl border border-stone-200 bg-white/80 p-6">
-            <h3 className="font-display text-sm font-semibold text-ink mb-4">Postuler</h3>
-            <a
-              href={job.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-accent-dark active:scale-[0.98] font-body shadow-lg shadow-accent/15"
-            >
-              Postuler sur {job.source}
-              <ExternalLink className="h-4 w-4" />
-            </a>
-            <p className="mt-3 text-xs text-stone-400 text-center font-body">
-              Vous serez redirigé vers {job.source}
-            </p>
-          </div> */}
-
           {/* Job Info Card */}
           <div className="rounded-2xl border border-stone-200 bg-white/80 p-6">
             <h3 className="font-display text-sm font-semibold text-ink mb-4">Informations</h3>
@@ -402,7 +360,7 @@ export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailCli
               <span className="text-sm text-stone-500 font-body">offres indexées</span>
             </div>
             <Link
-              href="/offres"
+              href={backUrl}
               className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-dark transition-colors font-body"
             >
               Explorer toutes les offres
@@ -420,11 +378,11 @@ export function JobDetailClient({ job, similarJobs, allJobsCount }: JobDetailCli
         className="mt-8 flex items-center justify-between rounded-xl border border-stone-200 bg-white/60 p-4 sm:p-6"
       >
         <Link
-          href="/offres"
+          href={backUrl}
           className="inline-flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-ink transition-colors font-body"
         >
           <ArrowLeft className="h-4 w-4" />
-          Retour aux offres
+          Retour aux offres {returnPage && parseInt(returnPage, 10) > 1 ? `(page ${returnPage})` : ""}
         </Link>
         <div className="hidden sm:flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={toggleSave}>

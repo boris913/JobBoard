@@ -1,5 +1,5 @@
-import { InputHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
+import { InputHTMLAttributes, forwardRef } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
@@ -8,21 +8,17 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, icon, ...props }, ref) => {
     return (
-      <div className="relative flex items-center">
+      <div className="relative">
         {icon && (
-          <span className="absolute left-3 flex items-center text-stone-400 pointer-events-none">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
             {icon}
-          </span>
+          </div>
         )}
         <input
           ref={ref}
           className={cn(
-            "w-full rounded-lg border border-stone-300 bg-white/80 backdrop-blur-sm",
-            "px-3 py-2 text-sm text-ink placeholder:text-stone-400",
-            "transition-all duration-200",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            icon && "pl-9",
+            "flex h-10 w-full rounded-lg border border-stone-300 bg-white/80 px-3 py-2 text-sm text-ink placeholder:text-stone-400 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent disabled:cursor-not-allowed disabled:opacity-50",
+            icon && "pl-10",
             className
           )}
           {...props}
@@ -31,4 +27,5 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
+
 Input.displayName = "Input";

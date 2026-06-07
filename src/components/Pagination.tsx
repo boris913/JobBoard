@@ -44,6 +44,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           variant={page === currentPage ? "primary" : "ghost"}
           size="sm"
           onClick={() => onPageChange(page)}
+          aria-label={`Page ${page}${page === currentPage ? ", page actuelle" : ""}`}
+          aria-current={page === currentPage ? "page" : undefined}
         >
           {page}
         </Button>

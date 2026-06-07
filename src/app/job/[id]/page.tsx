@@ -20,8 +20,27 @@ function getAdaptedJobs(): Job[] {
 }
 
 function findJobById(jobs: Job[], id: string): Job | null {
-  const decodedId = decodeURIComponent(id);
-  return jobs.find(job => `${job.title}-${job.company}-${job.location}` === decodedId) || null;
+  // Essayer de décoder l'ID de l'URL
+  let decodedId: string;
+  try {
+    decodedId = decodeURIComponent(id);
+  } catch {
+    // Si le décodage échoue, utiliser l'ID tel quel
+    decodedId = id;
+  }
+  
+  // Rechercher par correspondance exacte
+  const exactMatch = jobs.find(job => `${job.title}-${job.company}-${job.location}` === decodedId);
+  if (exactMatch) return exactMatch;
+  
+  // Fallback : recherche partielle pour gérer les problèmes d'encodage
+  const normalizedId = decodedId.toLowerCase().replace(/\s+/g, ' ').trim();
+  return jobs.find(job => {
+    const jobId = `${job.title}-${job.company}-${job.location}`.toLowerCase();
+    return jobId === normalizedId || 
+           jobId.replace(/\|/g, '') === normalizedId.replace(/\|/g, '') ||
+           encodeURIComponent(`${job.title}-${job.company}-${job.location}`) === id;
+  }) || null;
 }
 
 export async function generateStaticParams() {
@@ -52,14 +71,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function JobDetailPage({ 
+  params,
+  searchParams 
+}: { 
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnPage?: string }>;
+}) {
   const { id } = await params;
+  const { returnPage } = await searchParams;
   const jobs = getAdaptedJobs();
   const job = findJobById(jobs, id);
 
   if (!job) notFound();
 
-  // On extrait la ville proprement grâce à ta fonction utilitaire
+  // On extrait la ville proprement grâce à la fonction utilitaire
   const targetCity = extractCity(job.location);
 
   // Offres similaires : même source OU même ville (basé sur le nom nettoyé), exclure l'offre actuelle
@@ -73,5 +99,5 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     })
     .slice(0, 4);
 
-  return <JobDetailClient job={job} similarJobs={similarJobs} allJobsCount={jobs.length} />;
+  return <JobDetailClient job={job} similarJobs={similarJobs} allJobsCount={jobs.length} returnPage={returnPage} />;
 }

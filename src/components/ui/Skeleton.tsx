@@ -8,7 +8,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "rounded-md bg-stone-200/70 shimmer",
+        "animate-pulse rounded-md bg-stone-200/60",
         className
       )}
       aria-hidden="true"

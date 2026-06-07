@@ -7,16 +7,24 @@ import { MapPin, Building2, Calendar, ExternalLink } from "lucide-react";
 interface JobCardProps {
   job: Job;
   view: "grid" | "list";
+  currentPage?: number;
 }
 
-export function JobCard({ job, view }: JobCardProps) {
+export function JobCard({ job, view, currentPage = 1 }: JobCardProps) {
   const sourceColor = getSourceColor(job.source);
   const remote = isRemote(job.location);
+  
+  // Créer un ID slugifié et encodé proprement pour l'URL
   const jobId = encodeURIComponent(`${job.title}-${job.company}-${job.location}`);
+  
+  // Construire l'URL avec la page de retour
+  const detailUrl = currentPage > 1 
+    ? `/job/${jobId}?returnPage=${currentPage}` 
+    : `/job/${jobId}`;
 
   if (view === "grid") {
     return (
-      <Link href={`/job/${jobId}`} className="group block">
+      <Link href={detailUrl} className="group block">
         <div className="h-full rounded-xl border border-stone-200 bg-white/80 p-4 sm:p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <h3 className="font-display text-base sm:text-lg font-semibold text-ink line-clamp-2">{job.title}</h3>
           <div className="mt-2 flex items-center gap-1 text-sm text-stone-500">
@@ -43,7 +51,7 @@ export function JobCard({ job, view }: JobCardProps) {
     <div className="group rounded-xl border border-stone-200 bg-white/80 p-4 sm:p-5 transition-all duration-200 hover:shadow-md">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between min-w-0">
         <div className="flex-1 space-y-2 min-w-0">
-          <Link href={`/job/${jobId}`} className="hover:underline">
+          <Link href={detailUrl} className="hover:underline">
             <h3 className="font-display text-lg sm:text-xl font-semibold text-ink break-words">{job.title}</h3>
           </Link>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-stone-500">
